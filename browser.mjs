@@ -549,6 +549,7 @@ function run(input) {
     columns = obj(input.columns);
   const rows = [],
     quarantine = [];
+  for (const ref of Object.values(columns)) requireThat(typeof ref === "string" && /^(\$|@)\..+/.test(ref), "Column references must start with $. or @.");
   for (let i = 0; i < records.length; i++) {
     const record = obj(records[i]),
       children = get(record, path);
@@ -573,7 +574,7 @@ function run(input) {
     }
     for (let j = 0; j < children.length; j++) {
       requireThat(rows.length + quarantine.length < 20000, "Total expansion exceeds row bound");
-      const values = {},
+      const values = Object.create(null),
         missing = [];
       for (const [name, ref] of Object.entries(columns)) {
         str(ref);
